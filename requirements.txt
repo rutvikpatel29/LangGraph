@@ -6,3 +6,4 @@ transformers
 torch
 pydantic
 python-dotenv 
+langchain_openai

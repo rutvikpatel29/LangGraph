@@ -63,3 +63,5 @@ coverage.xml
 
 # Graph images
 graph.png 
+
+.env

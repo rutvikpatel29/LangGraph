@@ -4,10 +4,6 @@ from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
 import operator
 from langchain_community.chat_models import ChatOllama
-from dotenv import load_dotenv
-load_dotenv()
-import os
-print('Loaded API KEY:', os.getenv('OPENAI_API_KEY'))
 
 
 generator_llm = ChatOllama(model="llama3.2")

@@ -1,0 +1,8 @@
+langgraph
+langchain
+langchain-community
+openai
+transformers
+torch
+pydantic
+python-dotenv 

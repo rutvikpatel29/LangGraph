@@ -49,7 +49,7 @@ workflow = graph.compile()
 def save_graph_image(graph, path: str):
     with open(path, "wb") as f:
         f.write(graph.get_graph().draw_mermaid_png())
-save_graph_image(workflow, "LangGraph_In_Depth/graph.png")
+save_graph_image(workflow, "LangGraph/graph.png")
 
 # execute
 intial_state = {'title': 'Rise of AI in India'}

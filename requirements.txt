@@ -9,3 +9,4 @@ python-dotenv
 langchain_openai
 langchain_community
 beautifulsoup4
+langchain-tavily

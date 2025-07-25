@@ -1,39 +1,24 @@
-from langgraph.graph import StateGraph,START, END
-from typing import TypedDict, Literal, Annotated
-from langchain_openai import ChatOpenAI
+# nodes.py
+# Node functions for the tweeter post generator workflow.
+
+from .models import generator_llm, evaluator_llm, optimizer_llm, TweetEvaluation
 from langchain_core.messages import SystemMessage, HumanMessage
+from typing import TypedDict, Literal, Annotated
 import operator
-from langchain_community.chat_models import ChatOllama
-
-
-generator_llm = ChatOllama(model="llama3.2")
-evaluator_llm = ChatOpenAI(model='gpt-4o-mini')
-optimizer_llm = ChatOpenAI(model='gpt-4o-mini')
-
-from pydantic import BaseModel, Field
-
-class TweetEvaluation(BaseModel):
-    evaluation: Literal["approved", "needs_improvement"] = Field(..., description="Final evaluation result.")
-    feedback: str = Field(..., description="feedback for the tweet.")
 
 structured_evaluator_llm = evaluator_llm.with_structured_output(TweetEvaluation)
 
-# state
 class TweetState(TypedDict):
-
     topic: str
     tweet: str
     evaluation: Literal["approved", "needs_improvement"]
     feedback: str
     iteration: int
     max_iteration: int
-
     tweet_history: Annotated[list[str], operator.add]
     feedback_history: Annotated[list[str], operator.add]
 
 def generate_tweet(state: TweetState):
-
-    # prompt
     messages = [
         SystemMessage(content="You are a funny and clever Twitter/X influencer."),
         HumanMessage(content=f"""
@@ -47,19 +32,13 @@ Rules:
 - Use simple, day to day english
 """)
     ]
-
-    # send generator_llm
     response = generator_llm.invoke(messages).content
-
-    # return response
     return {'tweet': response, 'tweet_history': [response]}
 
 def evaluate_tweet(state: TweetState):
-
-    # prompt
     messages = [
-    SystemMessage(content="You are a ruthless, no-laugh-given Twitter critic. You evaluate tweets based on humor, originality, virality, and tweet format."),
-    HumanMessage(content=f"""
+        SystemMessage(content="You are a ruthless, no-laugh-given Twitter critic. You evaluate tweets based on humor, originality, virality, and tweet format."),
+        HumanMessage(content=f"""
 Evaluate the following tweet:
 
 Tweet: "{state['tweet']}"
@@ -82,14 +61,11 @@ Auto-reject if:
 - evaluation: "approved" or "needs_improvement"  
 - feedback: One paragraph explaining the strengths and weaknesses 
 """)
-]
-
+    ]
     response = structured_evaluator_llm.invoke(messages)
-
-    return {'evaluation':response.evaluation, 'feedback': response.feedback, 'feedback_history': [response.feedback]}
+    return {'evaluation': response.evaluation, 'feedback': response.feedback, 'feedback_history': [response.feedback]}
 
 def optimize_tweet(state: TweetState):
-
     messages = [
         SystemMessage(content="You punch up tweets for virality and humor based on given feedback."),
         HumanMessage(content=f"""
@@ -103,52 +79,12 @@ Original Tweet:
 Re-write it as a short, viral-worthy tweet. Avoid Q&A style and stay under 280 characters.
 """)
     ]
-
     response = optimizer_llm.invoke(messages).content
     iteration = state['iteration'] + 1
-
     return {'tweet': response, 'iteration': iteration, 'tweet_history': [response]}
 
-
 def route_evaluation(state: TweetState):
-
     if state['evaluation'] == 'approved' or state['iteration'] >= state['max_iteration']:
         return 'approved'
     else:
-        return 'needs_improvement'
-
-
-
-graph = StateGraph(TweetState)
-
-graph.add_node('generate', generate_tweet)
-graph.add_node('evaluate', evaluate_tweet)
-graph.add_node('optimize', optimize_tweet)
-
-graph.add_edge(START, 'generate')
-graph.add_edge('generate', 'evaluate')
-
-graph.add_conditional_edges('evaluate', route_evaluation, {'approved': END, 'needs_improvement': 'optimize'})
-graph.add_edge('optimize', 'evaluate')
-
-workflow = graph.compile()
-
-def save_graph_image(graph, path: str):
-    with open(path, "wb") as f:
-        f.write(graph.get_graph().draw_mermaid_png())
-save_graph_image(workflow, "LangGraph/graph.png")
-
-
-initial_state = {
-    "topic": "srhberhb",
-    "iteration": 1,
-    "max_iteration": 2
-}
-
-result = workflow.invoke(initial_state)
-print('Final State:')
-print(result)
-
-print('Tweet history:')
-for tweet in result['tweet_history']:
-    print(tweet)
+        return 'needs_improvement' 

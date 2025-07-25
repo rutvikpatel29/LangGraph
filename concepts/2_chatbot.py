@@ -34,7 +34,7 @@ def save_graph_image(graph, path: str):
 # --- Main Execution ---
 if __name__ == "__main__":
     graph = build_graph()
-    save_graph_image(graph, "LangGraph/graph.png")
+    save_graph_image(graph, "concepts/graph.png")
 
     # Example message
     message = {"role": "user", "content": "Who walked on the moon for the first time? Print only the name"}

@@ -24,7 +24,7 @@ if __name__ == "__main__":
     response_model = get_response_model()
     graph = build_workflow(MessagesState, retriever_tool, response_model)
     # Save a visualization of the workflow graph
-    save_graph_image(graph, "agentic_rag/graph.png")
+    save_graph_image(graph, "ai_agents/agentic_rag/graph.png")
 
     # Example user query
     input = {

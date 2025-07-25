@@ -56,7 +56,7 @@ workflow = graph.compile()
 def save_graph_image(graph, path: str):
     with open(path, "wb") as f:
         f.write(graph.get_graph().draw_mermaid_png())
-save_graph_image(workflow, "LangGraph/graph.png")
+save_graph_image(workflow, "concepts/graph.png")
 
 # execute the graph
 intial_state = {'weight_kg': 80, 'height_m': 1.73, 'bmi': 0.0, 'category': ''}

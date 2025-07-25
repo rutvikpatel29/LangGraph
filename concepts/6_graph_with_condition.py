@@ -49,7 +49,7 @@ def save_graph_image(graph, path: str):
 # --- Main Execution ---
 if __name__ == "__main__":
     graph = build_graph()
-    save_graph_image(graph, "LangGraph/graph.png")
+    save_graph_image(graph, "concepts/graph.png")
 
     # Example input for EUR
     result_eur = graph.invoke({"amount_usd": 1000, "total_usd": 0, "target_currency": "EUR", "total": 0})

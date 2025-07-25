@@ -39,7 +39,7 @@ workflow = graph.compile()
 def save_graph_image(graph, path: str):
     with open(path, "wb") as f:
         f.write(graph.get_graph().draw_mermaid_png())
-save_graph_image(workflow, "LangGraph/graph.png")
+save_graph_image(workflow, "concepts/graph.png")
 
 # execute
 intial_state = {'question': 'How far is moon from the earth?'}
